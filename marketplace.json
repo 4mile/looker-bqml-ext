@@ -5,6 +5,13 @@
     "tagline": "Looker BigQueryML Extension App",
     "brand_color": "#4285F4"
   },
+  "constants": {
+    "CONNECTION_NAME": {
+      "description": "BigQuery Connection Name",
+      "label": "BigQuery Connection Name",
+      "value_constraint": "connection"
+    }
+  },
   "user_attributes": {
     "bigquery_connection_name": {
       "label": "BigQuery Connection Name",
