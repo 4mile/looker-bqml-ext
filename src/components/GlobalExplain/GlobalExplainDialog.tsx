@@ -62,16 +62,11 @@ export const GlobalExplainDialog: React.FC = () => {
   )
 
   const drawCharts = () => {
-    console.log('drawCharts')
     let chartData = getFormattedData()
     if (!chartData || chartData.length <= 0) { return <></> }
 
     if (isClassLevel(activeTab)) {
       const datumKey = Object.keys(chartData[0]).filter((int:any) => int !== 'feature' && int !== 'attribution');
-      const uniqueDatums: string[] = [...new Set(chartData.map((int: any) => int[datumKey]))];
-
-      chartData.sort((a:any, b:any) => a[datumKey[0]] > b[datumKey[0]] ? 1 : -1)
-      console.log('drawCharts 2nd if', chartData)
 
       let datumSeperatedChartData = [];
       let datum = [];
@@ -83,38 +78,19 @@ export const GlobalExplainDialog: React.FC = () => {
           datum.push(chartData[a])
         }
         if (a > 0 && chartData[a][datumKey[0]] !== chartData[a-1][datumKey[0]]) {
-          datumSeperatedChartData.push(datum);
+          datumSeperatedChartData.push(datum.sort((a:any, b:any) => parseFloat(a.attribution) < parseFloat(b.attribution) ? 1 : -1));
           datum = [];
           datum.push(chartData[a])
         }
         if (a + 1 === chartData.length) {
-          datumSeperatedChartData.push(datum);
+          datumSeperatedChartData.push(datum.sort((a:any, b:any) => parseFloat(a.attribution) < parseFloat(b.attribution) ? 1 : -1));
         }
       }
-      console.log('datumSeperatedChartData', datumSeperatedChartData)
       
-
-      return datumSeperatedChartData.map((datum: any, i: number) => (
-        // console.log('datum', datum.attribution.slice(0, 10), `${displayTarget()}: ${titilize(datum[Object.keys(datum)[0]])}`);
-        <ExplainBarChart 
-          data={datum} 
-          label={
-            `${displayTarget()}: ${titilize(datum[0][datumKey[0]])}`
-          } 
-          key={i}/>
-      ))
       // for every class value show a chart of the top 10 features
-      // return (<ExplainBarChart
-      //   data={chartData}
-      //   label={
-      //     // `${displayTarget()}: ${titilize(datum[Object.keys(datum)[0]])}`
-      //     'placeholder'
-      //   }
-      //   // key={i} 
-      //   />)
-      // return chartData.map((datum: any, i: number) => (
-      //   <ExplainBarChart data={datum.top_feature_attributions.slice(0, 10)} label={`${displayTarget()}: ${titilize(datum[Object.keys(datum)[0]])}`} key={i}/>
-      // ))
+      return datumSeperatedChartData.map((datum: any, i: number) => (
+        <ExplainBarChart data={datum} label={`${displayTarget()}: ${titilize(datum[0][datumKey[0]])}`} key={i}/>
+      ))
     }
 
     if (topFeatures !== 'all') {
